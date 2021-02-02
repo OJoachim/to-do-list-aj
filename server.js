@@ -1,8 +1,14 @@
 const express = require('express');
 const socket = require('socket.io');
 const app = express();
+const path = require('path');
 
 let tasks = [];
+
+app.use(express.static(path.join(__dirname + '/client/build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/client/build/index.html'));
+});
 
 const server = app.listen(process.env.PORT || 8000, () => {
   console.log('Server is running...');
@@ -11,14 +17,19 @@ const server = app.listen(process.env.PORT || 8000, () => {
 const io = socket(server);
 
 io.on('connection', (socket) => {
-  socket.emit('updateData', tasks);
+  console.log('New client, id: ' + socket.id);
   
-  socket.on('addTask', (tasks) => {
+  socket.on('updateTask', (tasks) => {
+    //tasks.push(task);
+    socket.broadcast.emit('updateTask', tasks);
+  });
+  
+  socket.on('addTask', (task) => {
     tasks.push(task);
     socket.broadcast.emit('addTask', task);
   });
   
-  socket.on('removeTask', (tasks) => {
+  socket.on('removeTask', (id) => {
     tasks.filter(task => task.id !== id);
     socket.broadcast.emit('removeTask', id);
   });

@@ -6,10 +6,12 @@
   "author": "A. Joachimiak",
   "license": "MIT",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js",
+    "build": "cd client && yarn install && yarn build"
   },
   "dependencies": {
     "express": "4.17.1",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "socket.io": "2.2.0"
   }
 }
