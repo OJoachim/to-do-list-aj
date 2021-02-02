@@ -2,7 +2,8 @@ import React from 'react';
 import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 
-const socket = io();
+//const socket = io(tu adres hosta, np: 'http://localhost:8000');
+const socket = io(process.NODE_ENV === 'production' ? '' : 'http://localhost:8000');
 
 class App extends React.Component {
   

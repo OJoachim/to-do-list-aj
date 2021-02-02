@@ -3,7 +3,7 @@ const socket = require('socket.io');
 const app = express();
 const path = require('path');
 
-let tasks = [];
+const tasks = [];
 
 app.use(express.static(path.join(__dirname + '/client/build')));
 app.get('*', (req, res) => {
@@ -18,11 +18,7 @@ const io = socket(server);
 
 io.on('connection', (socket) => {
   console.log('New client, id: ' + socket.id);
-  
-  socket.on('updateTask', (tasks) => {
-    //tasks.push(task);
-    socket.broadcast.emit('updateTask', tasks);
-  });
+  socket.emit('updateTask', tasks);
   
   socket.on('addTask', (task) => {
     tasks.push(task);
@@ -30,7 +26,8 @@ io.on('connection', (socket) => {
   });
   
   socket.on('removeTask', (id) => {
-    tasks.filter(task => task.id !== id);
+    const taskToRemove = tasks.findIndex(task => task.id === id);
+    tasks.splice(taskToRemove, 1);
     socket.broadcast.emit('removeTask', id);
   });
 });
